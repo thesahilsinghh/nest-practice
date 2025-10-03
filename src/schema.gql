@@ -1,0 +1,67 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AddressType {
+  _id: ID!
+  city: String!
+  createdAt: DateTime
+  pin_code: Float!
+  student_id: ID!
+  updatedAt: DateTime
+}
+
+input CreateAddressInput {
+  city: String!
+  pin_code: Float!
+  student_id: ID!
+}
+
+input CreateStudentInput {
+  age: Float!
+  email: String
+  name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createAddress(input: CreateAddressInput!): AddressType!
+  createStudent(input: CreateStudentInput!): StudentType!
+  deleteAddress(id: ID!): AddressType
+  deleteStudent(id: ID!): StudentType
+  updateAddress(id: ID!, input: UpdateAddressInput!): AddressType
+  updateStudent(id: ID!, input: UpdateStudentInput!): StudentType
+}
+
+type Query {
+  addresses: [AddressType!]!
+  addressesByStudent(studentId: ID!): [AddressType!]!
+  student(id: ID!): StudentType
+  students: [StudentType!]!
+}
+
+type StudentType {
+  _id: ID!
+  addresses: [AddressType!]
+  age: Float!
+  createdAt: DateTime
+  email: String
+  name: String!
+  updatedAt: DateTime
+}
+
+input UpdateAddressInput {
+  city: String
+  pin_code: Float
+  student_id: ID
+}
+
+input UpdateStudentInput {
+  age: Float
+  email: String
+  name: String
+}

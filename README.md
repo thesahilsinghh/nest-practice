@@ -5,7 +5,11 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+<p align="center">
+  <strong>NestJS GraphQL API</strong><br/>
+  A modern GraphQL API with Student & Address management<br/>
+  Built with NestJS + MongoDB + Apollo Server
+</p>
     <p align="center">
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
@@ -23,25 +27,195 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A modern GraphQL API built with NestJS, featuring Student and Address management with MongoDB integration. This application demonstrates how to build scalable GraphQL APIs using NestJS with TypeScript, Mongoose, and Apollo Server.
+
+## Features
+
+- **GraphQL API** with Apollo Server
+- **Student Management** - Complete CRUD operations
+- **Address Management** - Complete CRUD operations
+- **MongoDB Integration** with Mongoose
+- **GraphQL Playground** for interactive querying
+- **TypeScript** for type safety
+- **Relationship Management** - Students can have multiple addresses
+
+## Available GraphQL Operations
+
+### Student Operations
+
+- `students` - Get all students
+- `student(id: ID!)` - Get student by ID
+- `createStudent(input: CreateStudentInput!)` - Create new student
+- `updateStudent(id: ID!, input: UpdateStudentInput!)` - Update student
+- `deleteStudent(id: ID!)` - Delete student
+
+### Address Operations
+
+- `addresses` - Get all addresses
+- `addressesByStudent(studentId: ID!)` - Get addresses by student ID
+- `createAddress(input: CreateAddressInput!)` - Create new address
+- `updateAddress(id: ID!, input: UpdateAddressInput!)` - Update address
+- `deleteAddress(id: ID!)` - Delete address
+
+### Example Queries
+
+**Get all students with their addresses:**
+
+```graphql
+query {
+  students {
+    _id
+    name
+    age
+    email
+    addresses {
+      _id
+      city
+      pin_code
+    }
+  }
+}
+```
+
+**Create a new student:**
+
+```graphql
+mutation {
+  createStudent(
+    input: { name: "John Doe", age: 25, email: "john@example.com" }
+  ) {
+    _id
+    name
+    age
+    email
+  }
+}
+```
+
+**Create an address for a student:**
+
+```graphql
+mutation {
+  createAddress(
+    input: {
+      student_id: "68dd9226bb3a6620c8df8746"
+      city: "New York"
+      pin_code: 10001
+    }
+  ) {
+    _id
+    city
+    pin_code
+    student_id
+  }
+}
+```
+
+## Tech Stack
+
+- **[NestJS](https://nestjs.com/)** - Progressive Node.js framework
+- **[GraphQL](https://graphql.org/)** - Query language and runtime
+- **[Apollo Server](https://www.apollographql.com/docs/apollo-server/)** - GraphQL server
+- **[MongoDB](https://www.mongodb.com/)** - NoSQL database
+- **[Mongoose](https://mongoosejs.com/)** - MongoDB object modeling
+- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
+
+## Project Structure
+
+```
+src/
+├── app.module.ts                 # Main application module with GraphQL setup
+├── main.ts                       # Application entry point
+├── schema.gql                    # Auto-generated GraphQL schema
+├── student/
+│   ├── student.module.ts         # Student module configuration
+│   ├── student.resolver.ts       # GraphQL resolvers for students
+│   ├── student.service.ts        # Business logic
+│   ├── dto/
+│   │   ├── index.ts              # DTO exports
+│   │   └── student.dto.ts        # GraphQL types and inputs
+│   └── schema/
+│       ├── index.ts              # Schema exports
+│       └── student.schema.ts     # MongoDB schema
+└── address/
+    ├── address.module.ts         # Address module configuration
+    ├── address.resolver.ts       # GraphQL resolvers for addresses
+    ├── address.service.ts        # Business logic
+    ├── dto/
+    │   ├── index.ts              # DTO exports
+    │   └── address.dto.ts        # GraphQL types and inputs
+    └── schema/
+        ├── index.ts              # Schema exports
+        └── address.schema.ts     # MongoDB schema
+```
 
 ## Project setup
 
+### Prerequisites
+
+- Node.js (v14 or higher)
+- MongoDB (running locally or MongoDB Atlas)
+
+### Installation
+
 ```bash
+# Install dependencies
 $ npm install
+
+# Set up environment variables (optional)
+# Create a .env file with:
+# MONGO_URI=mongodb://localhost:27017/nest-graphql
 ```
 
-## Compile and run the project
+### Database Setup
+
+Make sure MongoDB is running. You can:
+
+- Run MongoDB locally: `mongod`
+- Use MongoDB Docker: `docker run -d -p 27017:27017 mongo`
+- Use MongoDB Atlas (cloud): Update MONGO_URI in your environment
+
+## Running the Application
 
 ```bash
 # development
 $ npm run start
 
-# watch mode
+# watch mode (recommended for development)
 $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+```
+
+After starting the application:
+
+- **GraphQL Playground**: Visit `http://localhost:3000/graphql`
+- **REST endpoint**: `http://localhost:3000` (basic app controller)
+
+### Using GraphQL Playground
+
+The GraphQL Playground provides an interactive interface to:
+
+- Explore the API schema
+- Write and test queries/mutations
+- View documentation
+- See query execution plans
+
+### Testing the API
+
+You can also test the GraphQL API using curl:
+
+```bash
+# Get all students
+curl -X POST http://localhost:3000/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "query { students { _id name age email } }"}'
+
+# Create a new student
+curl -X POST http://localhost:3000/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "mutation { createStudent(input: { name: \"Test User\", age: 25, email: \"test@example.com\" }) { _id name age email } }"}'
 ```
 
 ## Run tests
@@ -69,6 +243,59 @@ $ mau deploy
 ```
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+
+## API Documentation
+
+### Data Models
+
+**Student**
+
+```graphql
+type StudentType {
+  _id: ID!
+  name: String!
+  age: Float!
+  email: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  addresses: [AddressType!]
+}
+```
+
+**Address**
+
+```graphql
+type AddressType {
+  _id: ID!
+  student_id: ID!
+  city: String!
+  pin_code: Float!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+```
+
+### Input Types
+
+**CreateStudentInput**
+
+```graphql
+input CreateStudentInput {
+  name: String!
+  age: Float!
+  email: String
+}
+```
+
+**CreateAddressInput**
+
+```graphql
+input CreateAddressInput {
+  student_id: ID!
+  city: String!
+  pin_code: Float!
+}
+```
 
 ## Resources
 
